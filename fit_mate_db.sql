@@ -128,9 +128,9 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
-    ticket_apply_date DATE,
-    ticket_used_date DATE,
-    ticket_processed_date DATE,
+    ticket_apply_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ticket_used_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ticket_processed_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     ticket_reject_reason VARCHAR(100),
     ticket_progress VARCHAR(50) CHECK (ticket_progress IN 
 		('NOT_USED', 'APPLICATION', 'IN_PROGRESS', 'COMPLETE', 'REJECT')) NOT NULL,
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `coupons`(
     trainer_id BIGINT NOT NULL,
     coupon_image BLOB,
     coupon_expiration_period DATE NOT NULL,
-    coupon_used_date DATE,
+    coupon_used_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 	coupon_progress VARCHAR(50) CHECK (coupon_progress IN 
 		('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED')) NOT NULL,
     
