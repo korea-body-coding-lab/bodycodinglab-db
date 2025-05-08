@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `members` (
 CREATE TABLE IF NOT EXISTS `matches`(
     member_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
-    match_id BIGINT UNIQUE,
+    match_id BIGINT NOT NULL,
     match_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     match_is_maintained BOOLEAN NOT NULL DEFAULT TRUE,
     
@@ -131,10 +131,9 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_apply_date DATE,
     ticket_used_date DATE,
     ticket_processed_date DATE,
-    ticket_is_used BOOLEAN NOT NULL DEFAULT FALSE,
-    ticket_is_approved BOOLEAN NOT NULL DEFAULT FALSE,
-    ticket_is_rejection BOOLEAN NOT NULL DEFAULT FALSE,
     ticket_reject_reason VARCHAR(100),
+    ticket_progress VARCHAR(50) CHECK (ticket_progress IN 
+		('NOT_USED', 'APPLICATION', 'IN_PROGRESS', 'COMPLETE', 'REJECT')) NOT NULL,
     
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
@@ -147,14 +146,14 @@ CREATE TABLE IF NOT EXISTS `coupons`(
     coupon_image BLOB,
     coupon_expiration_period DATE NOT NULL,
     coupon_used_date DATE,
-    coupon_is_used BOOLEAN NOT NULL DEFAULT FALSE,
-    coupon_is_expired BOOLEAN NOT NULL DEFAULT FALSE,
+	coupon_progress VARCHAR(50) CHECK (coupon_progress IN 
+		('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED')) NOT NULL,
     
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE `member_form`(
+CREATE TABLE IF NOT EXISTS `member_form`(
    form_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL ,
     age TINYINT NOT NULL,
@@ -218,4 +217,17 @@ CREATE TABLE IF NOT EXISTS `reviews`(
     review_score TINYINT UNSIGNED NOT NULL,
     
     FOREIGN KEY (trainer_id, member_id) REFERENCES matches(trainer_id, member_id)
+);
+
+CREATE TABLE IF NOT EXISTS `match_waiting_list` (
+	member_id BIGINT NOT NULL,
+    trainer_id BIGINT NOT NULL,
+    match_waiting_id BIGINT NOT NULL,
+    match_application_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    match_admission BOOLEAN NOT NULL DEFAULT FALSE,
+    
+    PRIMARY KEY(member_id, trainer_id),
+    FOREIGN KEY (member_id) REFERENCES users(user_id),
+    FOREIGN KEY (trainer_id) REFERENCES users(user_id)
+);
 );
