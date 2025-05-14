@@ -4,7 +4,6 @@ USE `fit_mate_db`;
 
 CREATE TABLE IF NOT EXISTS `users` (
 	user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    role_id VARCHAR(20) NOT NULL,
     username VARCHAR(20) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     profile_image LONGBLOB, 
@@ -13,8 +12,24 @@ CREATE TABLE IF NOT EXISTS `users` (
     gender VARCHAR(20) NOT NULL,
     phone VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    CHECK (role_id IN ('MEMBER', 'TRAINER', 'NON_MEMBER')),
     CHECK (gender IN ('MAN', 'WOMAN')) 
+);
+
+CREATE TABLE IF NOT EXISTS roles (
+	role_id BIGINT AUTO_INCREMENT PRIMARY KEY,	-- 역할 고유 ID
+    role_name VARCHAR(50) NOT NULL UNIQUE		-- 역할 이름 (ex. ADMIN, USER), 중복 불가
+);
+
+INSERT INTO roles (role_name)
+VALUES
+	('MEMBER'), ('TRAINER'), ('NON_MEMBER');	-- MEMBER: 구독회원, TRAINER: 트레이너, NON_MEMBER: 일반회원
+    
+CREATE TABLE IF NOT EXISTS user_roles (
+	user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, role_id), -- 복합 기본키: 중복 매핑 방지
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `trainer_infos`(
@@ -66,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `matches`(
     match_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     member_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
-    match_date DATE DEFAULT CURRENT_TIMESTAMP, -- 보류
+    # match_date DATE DEFAULT CURRENT_TIMESTAMP, -- 보류
     is_maintained BOOLEAN DEFAULT TRUE,
     UNIQUE KEY (member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
