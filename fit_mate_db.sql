@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_processed_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- 보류
     ticket_reject_reason VARCHAR(100), -- 보류: 티켓 보류 사유
     ticket_progress VARCHAR(50) NOT NULL,
-    CHECK (ticket_progress IN ('NOT_USED', 'APPLICATION', 'IN_PROGRESS', 'COMPLETE', 'REJECT')),
+    CHECK (ticket_progress IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'COMPLETE', 'REJECT')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 );
