@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `fit_mate_db`;
+CREATE DATABASE IF NOT EXISTS `fit_mate_db`
+CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE `fit_mate_db`;
 
@@ -13,12 +14,12 @@ CREATE TABLE IF NOT EXISTS `users` (
     phone VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     CHECK (gender IN ('MAN', 'WOMAN')) 
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS roles (
 	role_id BIGINT AUTO_INCREMENT PRIMARY KEY,	-- 역할 고유 ID
     role_name VARCHAR(50) NOT NULL UNIQUE		-- 역할 이름 (ex. ADMIN, USER), 중복 불가
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO roles (role_name)
 VALUES
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS user_roles (
     PRIMARY KEY (user_id, role_id), -- 복합 기본키: 중복 매핑 방지
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	trainer_id BIGINT PRIMARY KEY,
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	trainer_short_introduce VARCHAR(150),
     trainer_long_introduce TEXT,
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 최종 학력만 기입 가능 
 CREATE TABLE IF NOT EXISTS `trainer_educations` (
@@ -48,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `trainer_educations` (
     education_entrance YEAR NOT NULL,
     education_graduate YEAR NOT NULL,
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `trainer_careers` (
 	career_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -57,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `trainer_careers` (
     company_join YEAR NOT NULL,
     company_quit YEAR NOT NULL,
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `trainer_licenses` (
 	license_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -67,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `trainer_licenses` (
     license_image LONGBLOB NOT NULL,
     CHECK (license_type IN('LICENSE', 'CERTIFICATE', 'AWARD_DETAIL')), -- LICENSE: "자격증", CERTIFICATE: "수료증, AWARD_DETAIL: "수상내역"
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `members` (
 	member_id BIGINT PRIMARY KEY,
@@ -75,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `members` (
     member_subscribe_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     is_approved BOOLEAN DEFAULT FALSE,
 	FOREIGN KEY (member_id) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `matches`(
     match_id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -86,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `matches`(
     UNIQUE KEY (member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `personal_community_board`(
     board_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -100,13 +101,13 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
     FOREIGN KEY (match_id) REFERENCES matches(match_id),
     FOREIGN KEY (writer_id) REFERENCES users(user_id),
     FOREIGN KEY (category_id) REFERENCES personal_community_board_categories(category_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 CREATE TABLE  IF NOT EXISTS `personal_community_board_categories` (
 	category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(20) NOT NULL
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `personal_community_board_comments` (
 	comment_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -116,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `personal_community_board_comments` (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- 보류
     FOREIGN KEY(board_id) REFERENCES personal_community_board (board_id),
     FOREIGN KEY(commenter_id) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 보류 --
 CREATE TABLE IF NOT EXISTS `notes` (
@@ -130,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `notes` (
     note_receive_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (note_writer) REFERENCES users(user_id),
     FOREIGN KEY (note_receiver) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -144,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     CHECK (ticket_progress IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'COMPLETE', 'REJECT')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 보류
 CREATE TABLE IF NOT EXISTS `coupons`(
@@ -158,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `coupons`(
     CHECK (coupon_progress IN ('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 보류
 CREATE TABLE IF NOT EXISTS `member_form`(
@@ -194,7 +195,7 @@ CREATE TABLE IF NOT EXISTS `member_form`(
 	CHECK (Investable_time IN ('30MIN', '40MIN', '1HOUR', 'FREEDOM')),
     FOREIGN KEY (member_id) REFERENCES `users` (user_id)
     
- );
+ ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
  
 -- 보류
  CREATE TABLE IF NOT EXISTS `trainer_files` (
@@ -202,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `member_form`(
     trainer_id BIGINT NOT NULL,
     -- file_name BLOB
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 자유 게시판 
 CREATE TABLE IF NOT EXISTS `posts`(
@@ -215,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `posts`(
     view_count INT UNSIGNED NOT NULL, -- 조회수
     image LONGBLOB, -- 보류
     FOREIGN KEY (writer_id) REFERENCES users (user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `post_comments`(
     comment_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -224,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `post_comments`(
     commeter_id BIGINT NOT NULL, 
     FOREIGN KEY (post_id) REFERENCES posts(post_id),
     FOREIGN KEY (commeter_id) REFERENCES users (user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 CREATE TABLE IF NOT EXISTS `reviews`(
@@ -235,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `reviews`(
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP ,
     review_score TINYINT UNSIGNED NOT NULL, -- 평점 
     FOREIGN KEY (match_id) REFERENCES matches(match_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 보류
 CREATE TABLE IF NOT EXISTS `match_waiting_list` (
@@ -247,4 +248,4 @@ CREATE TABLE IF NOT EXISTS `match_waiting_list` (
     PRIMARY KEY(member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
