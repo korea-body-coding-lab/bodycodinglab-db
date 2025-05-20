@@ -13,10 +13,13 @@ CREATE TABLE IF NOT EXISTS `users` (
     gender VARCHAR(20) NOT NULL,
     phone VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
+    member_address VARCHAR(255), -- 보류
+    trainer_job_address VARCHAR(255), -- 보류
+    trainer_attachment BLOB,
     CHECK (gender IN ('MAN', 'WOMAN')) 
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS roles (
+CREATE TABLE IF NOT EXISTS `roles` (
 	role_id BIGINT AUTO_INCREMENT PRIMARY KEY,	-- 역할 고유 ID
     role_name VARCHAR(50) NOT NULL UNIQUE		-- 역할 이름 (ex. ADMIN, USER), 중복 불가
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -25,7 +28,7 @@ INSERT INTO roles (role_name)
 VALUES
 	('MEMBER'), ('TRAINER'), ('NON_MEMBER');	-- MEMBER: 구독회원, TRAINER: 트레이너, NON_MEMBER: 일반회원
     
-CREATE TABLE IF NOT EXISTS user_roles (
+CREATE TABLE IF NOT EXISTS `user_roles` (
 	user_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
     PRIMARY KEY (user_id, role_id), -- 복합 기본키: 중복 매핑 방지
@@ -35,7 +38,6 @@ CREATE TABLE IF NOT EXISTS user_roles (
 
 CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	trainer_id BIGINT PRIMARY KEY,
-    trainer_job_address VARCHAR(100) NOT NULL, -- 보류
 	trainer_short_introduce VARCHAR(150),
     trainer_long_introduce TEXT,
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
@@ -72,7 +74,6 @@ CREATE TABLE IF NOT EXISTS `trainer_licenses` (
 
 CREATE TABLE IF NOT EXISTS `members` (
 	member_id BIGINT PRIMARY KEY,
-    member_address VARCHAR(255) NOT NULL, -- 보류
     member_subscribe_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     is_approved BOOLEAN DEFAULT FALSE,
 	FOREIGN KEY (member_id) REFERENCES users(user_id)
@@ -137,12 +138,12 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL, 
     trainer_id BIGINT NOT NULL,
-    ticket_apply_date TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    ticket_used_date TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    ticket_processed_date DATETIME DEFAULT CURRENT_TIMESTAMP, -- 보류
-    ticket_reject_reason VARCHAR(100), -- 보류: 티켓 보류 사유
+    applied_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    used_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    processed_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- 보류
+    reject_reason VARCHAR(100), -- 보류: 티켓 보류 사유
     ticket_progress VARCHAR(50) NOT NULL,
-    CHECK (ticket_progress IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'COMPLETE', 'REJECT')),
+    CHECK (ticket_progress IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'APPROVAL', 'USED_COMPLETE', 'REJECT')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -194,7 +195,6 @@ CREATE TABLE IF NOT EXISTS `member_form`(
 	CHECK (exercise_frequency IN ('NEVER', 'WEEK_1TO2', 'WEEK_3', 'MORE_WEEK_3')),
 	CHECK (Investable_time IN ('30MIN', '40MIN', '1HOUR', 'FREEDOM')),
     FOREIGN KEY (member_id) REFERENCES `users` (user_id)
-    
  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
  
 -- 보류
@@ -241,12 +241,11 @@ CREATE TABLE IF NOT EXISTS `reviews`(
 
 -- 보류
 CREATE TABLE IF NOT EXISTS `match_waiting_list` (
+	match_waiting_id BIGINT PRIMARY KEY AUTO_INCREMENT,
 	member_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
-    match_waiting_id BIGINT NOT NULL,
     match_application_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     match_admission BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY(member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
