@@ -223,6 +223,7 @@ CREATE TABLE IF NOT EXISTS `post_comments`(
     post_id BIGINT NOT NULL,
 	content TEXT NOT NULL,
     commeter_id BIGINT NOT NULL, 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(post_id),
     FOREIGN KEY (commeter_id) REFERENCES users (user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
