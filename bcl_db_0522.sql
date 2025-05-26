@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	education_name VARCHAR(100),
     education_entrance YEAR,
     education_graduate YEAR,
+    CHECK (status IN ('NOT_APPROVE', 'APPORVE', 'REJECT')) ,
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 );
 
@@ -88,7 +89,6 @@ CREATE TABLE IF NOT EXISTS `matches`(
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-##### 카테고리별 데이터 테이블 분리 #####
 CREATE TABLE IF NOT EXISTS `personal_community_board`(
     board_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     match_id BIGINT NOT NULL,
@@ -105,8 +105,8 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
 
 CREATE TABLE  IF NOT EXISTS `personal_community_board_categories` (
 	category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    category_name VARCHAR(20) NOT NULL, ##### 카테고리 종류 명시 #####
-    CHECK(category_name IN ("meal", "routine", "community" )) ###### 식단, 운동루틴, 커뮤니티
+    category_name VARCHAR(20) NOT NULL, 
+    CHECK(category_name IN ('MEAL', 'ROUTINE', 'COMMUNITY' )) -- MEAL: "식단", ROUTINE: "운동루틴", COMMUNITY: "커뮤니티"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `personal_community_board_comments` (
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS `coupons`(
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `member_form`(
+CREATE TABLE IF NOT EXISTS `member_forms`(
    form_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL ,
     age TINYINT NOT NULL,
@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `member_form`(
 	CHECK (bodyform IN ('SLIM', 'NORMAL', 'FAT')),
     CHECK (goal IN('DIET', 'IMPROVEMENT_OF_MUSCLE', 'PERFORMANCE')),
     CHECK (improved_part IN ('CHEST', 'ARM', 'STOMACH', 'LEG', 'NOT_APPLICABLE')),
-    CHECK (preferred_diet IN ('VEGETARIAM', 'VEGAN', 'KITO', 'MEDITERRANEAN', 'CANIBORE', 'NOT_APPLICABLE')),
+    CHECK (preferred_diet IN ('VEGETARIAN', 'VEGAN', 'KITO', 'MEDITERRANEAN', 'CANIBORE', 'NOT_APPLICABLE')),
     CHECK (sugar_intake IN ('DONT_OFTEN', 'WEEK_3TO5', 'EVERYDAY')),
     CHECK (water_intake IN ('COFFE_TEA', 'LESS_2', '2TO6', '7TO10', 'MORE_10')),
 	CHECK (exercising_problem IN ('MOTIVATION', 'EFFECT', 'HARD', 'PLAN', 'COACHING', 'NOT_APPLICABLE')),
@@ -191,13 +191,6 @@ CREATE TABLE IF NOT EXISTS `member_form`(
 	CHECK (Investable_time IN ('30MIN', '40MIN', '1HOUR', 'FREEDOM')),
     FOREIGN KEY (member_id) REFERENCES `users` (user_id)
  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
---  CREATE TABLE IF NOT EXISTS `trainer_files` (
---     file_id BIGINT PRIMARY KEY AUTO_INCREMENT ,
---     trainer_id BIGINT NOT NULL,
---     -- file_name BLOB
---     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id)
--- ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `reviews`(
     review_id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -213,7 +206,27 @@ CREATE TABLE IF NOT EXISTS `reviews`(
 CREATE TABLE IF NOT EXISTS `review_comments`(
 	comment_id BIGINT PRIMARY KEY AUTO_INCREMENT,
 	review_id BIGINT NOT NULL,
+    match_id BIGINT NOT NULL,
     content TEXT NOT NULL,
     create_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (review_id) REFERENCES reviews(review_id)
+    FOREIGN KEY (review_id) REFERENCES reviews(review_id),
+	FOREIGN KEY (match_id) REFERENCES matches(match_id)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+create table if not exists `upload_files` (
+	id bigint auto_increment primary key,
+    original_name varchar(255) not null,
+    file_name varchar(255) not null, 
+    file_path varchar(500) not null, 
+    file_type varchar(100), 
+    file_size bigint not null, 
+    
+    target_id bigint not null,
+    target_type enum('PROFILE', 'MEAL','ROUTINE', 'COMMUNITY', 'TRAINER_INFOS',
+    'TRAINER_LICENSE', 'TRAINER_ATTACHMENT', 'REVIEW') not null,
+    -- PROFILE: user프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
+    -- TRAINER_INFOS: 트레이너 긴 소개 파일들, TRAINER_LICENSE: 자격증, TRAINER_ATTACHMENT: 계약서,
+    -- REVIEW: 리뷰
+    
+    index idx_target (target_id, target_type)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
