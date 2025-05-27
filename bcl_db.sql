@@ -56,8 +56,8 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	education_name VARCHAR(100),
     education_entrance YEAR,
     education_graduate YEAR,
-    CHECK (status IN ('NOT_APPROVE', 'APPORVE', 'REJECT')) ,
-    FOREIGN KEY (trainer_id) REFERENCES users(user_id)
+    FOREIGN KEY (trainer_id) REFERENCES users(user_id),
+    CHECK (status IN ('NOT_APPROVE', 'APPORVE', 'REJECT')) 
 );
 
 CREATE TABLE IF NOT EXISTS `trainer_careers` (
@@ -74,8 +74,9 @@ CREATE TABLE IF NOT EXISTS `trainer_licenses` (
 	trainer_id BIGINT NOT NULL,
     license_type VARCHAR(20) NOT NULL,
     license_name VARCHAR(100) NOT NULL,
-    CHECK (license_type IN('LICENSE', 'CERTIFICATE', 'AWARD_DETAIL')), -- LICENSE: "자격증", CERTIFICATE: "수료증, AWARD_DETAIL: "수상내역"
-    FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id)
+    FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id),
+    CHECK (license_type IN('LICENSE', 'CERTIFICATE', 'AWARD_DETAIL')) 
+    -- LICENSE: "자격증", CERTIFICATE: "수료증, AWARD_DETAIL: "수상내역"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `match_waiting_list` (
@@ -116,7 +117,8 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
 CREATE TABLE  IF NOT EXISTS `personal_community_board_categories` (
 	category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     category_name VARCHAR(20) NOT NULL, 
-    CHECK(category_name IN ('MEAL', 'ROUTINE', 'COMMUNITY' )) -- MEAL: "식단", ROUTINE: "운동루틴", COMMUNITY: "커뮤니티"
+    CHECK(category_name IN ('MEAL', 'ROUTINE', 'COMMUNITY' )) 
+    -- MEAL: "식단", ROUTINE: "운동루틴", COMMUNITY: "커뮤니티"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `personal_community_board_comments` (
@@ -150,9 +152,9 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     processed_at DATE NOT NULL, 
     reject_reason VARCHAR(100),
     status VARCHAR(50) NOT NULL,  
-    CHECK (status IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'APPROVAL', 'USED_COMPLETE', 'REJECT')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
-    FOREIGN KEY (trainer_id) REFERENCES users(user_id)
+    FOREIGN KEY (trainer_id) REFERENCES users(user_id),
+    CHECK (status IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'APPROVAL', 'USED_COMPLETE', 'REJECT'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `coupons`(
@@ -163,9 +165,9 @@ CREATE TABLE IF NOT EXISTS `coupons`(
     expiration_period DATE NOT NULL,
     used_date  DATE, 
 	status VARCHAR(50) NOT NULL,
-    CHECK (status IN ('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
-    FOREIGN KEY (trainer_id) REFERENCES users(user_id)
+    FOREIGN KEY (trainer_id) REFERENCES users(user_id),
+    CHECK (status IN ('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `member_forms`(
@@ -188,6 +190,7 @@ CREATE TABLE IF NOT EXISTS `member_forms`(
     pullup_level VARCHAR(20) NOT NULL,
     exercise_frequency VARCHAR(20) NOT NULL,
     investable_time VARCHAR(20) NOT NULL, 
+    FOREIGN KEY (member_id) REFERENCES `users` (user_id),
 	CHECK (bodyform IN ('SLIM', 'NORMAL', 'FAT')),
     CHECK (goal IN('DIET', 'IMPROVEMENT_OF_MUSCLE', 'PERFORMANCE')),
     CHECK (improved_part IN ('CHEST', 'ARM', 'STOMACH', 'LEG', 'NOT_APPLICABLE')),
@@ -198,8 +201,7 @@ CREATE TABLE IF NOT EXISTS `member_forms`(
     CHECK (pushup_level IN ('LESS_5', '5TO10', 'MORE_10')), 
     CHECK (pullup_level IN ('LESS_5', '5TO10', 'MORE_10')),
 	CHECK (exercise_frequency IN ('NEVER', 'WEEK_1TO2', 'WEEK_3', 'MORE_WEEK_3')),
-	CHECK (Investable_time IN ('30MIN', '40MIN', '1HOUR', 'FREEDOM')),
-    FOREIGN KEY (member_id) REFERENCES `users` (user_id)
+	CHECK (Investable_time IN ('30MIN', '40MIN', '1HOUR', 'FREEDOM'))
  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `reviews`(
@@ -229,13 +231,11 @@ CREATE TABLE IF NOT EXISTS `upload_files` (
     file_path VARCHAR(500) NOT NULL, 
     file_type VARCHAR(100), 
     file_size BIGINT NOT NULL, 
-    
     target_id BIGINT NOT NULL,
     target_type ENUM('PROFILE', 'MEAL','ROUTINE', 'COMMUNITY', 'TRAINER_INFOS',
     'TRAINER_LICENSE', 'TRAINER_ATTACHMENT', 'REVIEW') NOT NULL,
     -- PROFILE: user프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
     -- TRAINER_INFOS: 트레이너 긴 소개 파일들, TRAINER_LICENSE: 자격증, TRAINER_ATTACHMENT: 계약서,
     -- REVIEW: 리뷰
-    
     INDEX idx_target (target_id, target_type)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
