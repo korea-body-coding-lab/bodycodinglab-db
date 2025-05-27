@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `members` (
 	member_id BIGINT PRIMARY KEY,
     member_address VARCHAR(255) NOT NULL,
     status VARCHAR(20) NOT NULL,
-    is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
+    is_approved BOOLEAN DEFAULT FALSE, 
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPORVE', 'REJECT'))
     -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPORVE: "승인(구독)", REJECT: "거절"
@@ -134,8 +134,8 @@ CREATE TABLE IF NOT EXISTS `personal_community_board_comments` (
 CREATE TABLE IF NOT EXISTS `notes` (
 	note_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     text TEXT NOT NULL,
-    sender BIGINT NOT NULL, -- 발신인
-    recipient BIGINT NOT NULL, -- 수신인
+    sender BIGINT NOT NULL, 
+    recipient BIGINT NOT NULL, 
     is_readed BOOLEAN DEFAULT FALSE,
     send_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     receive_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -147,8 +147,8 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL, 
     trainer_id BIGINT NOT NULL,
-    applied_at DATE NOT NULL,  -- 발급 또는 신청 일자
-    used_at DATE NOT NULL,  -- 사용 완료 일자
+    applied_at DATE NOT NULL,  
+    used_at DATE NOT NULL,  
     processed_at DATE NOT NULL, 
     reject_reason VARCHAR(100),
     status VARCHAR(50) NOT NULL,  
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `reviews`(
     match_id BIGINT NOT NULL ,
     content TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP ,
-    review_score TINYINT UNSIGNED NOT NULL, -- 평점 
+    review_score TINYINT UNSIGNED NOT NULL, 
     recommend_count INT UNSIGNED NOT NULL,
     FOREIGN KEY (match_id) REFERENCES matches(match_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
