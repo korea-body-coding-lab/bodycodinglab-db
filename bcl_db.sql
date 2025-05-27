@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS `users` (
     role_id BIGINT NOT NULL,
     username VARCHAR(20) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    profile_image LONGBLOB, ##### 보류 #####
     name VARCHAR(25) NOT NULL,
     birthdate DATE NOT NULL,
     gender VARCHAR(20) NOT NULL,
@@ -43,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `subscriptions` (
     subscription_name VARCHAR(50) NOT NULL,
     price INT NOT NULL,
     payment_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    member_subscribe_date DATETIME DEFAULT CURRENT_TIMESTAMP, ##### 구독 후 자동 삽입 데이터 #####
+    member_subscribe_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES members(member_id)
 );
 
@@ -75,7 +74,6 @@ CREATE TABLE IF NOT EXISTS `trainer_licenses` (
 	trainer_id BIGINT NOT NULL,
     license_type VARCHAR(20) NOT NULL,
     license_name VARCHAR(100) NOT NULL,
-    license_image LONGBLOB NOT NULL, ##### 보류 #####
     CHECK (license_type IN('LICENSE', 'CERTIFICATE', 'AWARD_DETAIL')), -- LICENSE: "자격증", CERTIFICATE: "수료증, AWARD_DETAIL: "수상내역"
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(trainer_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -95,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `matches`(
     match_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     member_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
-    # match_date DATE DEFAULT CURRENT_TIMESTAMP, ##### DATE 타입 기본값 지정 방식 #####
+    match_date DATE NOT NULL, 
     is_maintained BOOLEAN DEFAULT TRUE,
     UNIQUE KEY (member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
@@ -108,7 +106,6 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
     category_id BIGINT NOT NULL,
     title VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
-    image LONGBLOB,  ##### 보류 #####
     writer_id BIGINT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (match_id) REFERENCES matches(match_id),
@@ -148,11 +145,11 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL, 
     trainer_id BIGINT NOT NULL,
-    applied_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 발급 또는 신청 일자
-    used_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 사용 완료 일자
-    processed_at DATETIME DEFAULT CURRENT_TIMESTAMP, ##### 보류 #####
+    applied_at DATE NOT NULL,  -- 발급 또는 신청 일자
+    used_at DATE NOT NULL,  -- 사용 완료 일자
+    processed_at DATE NOT NULL, 
     reject_reason VARCHAR(100),
-    status VARCHAR(50) NOT NULL,  ##### 보류 #####
+    status VARCHAR(50) NOT NULL,  
     CHECK (status IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'APPROVAL', 'USED_COMPLETE', 'REJECT')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
@@ -164,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `coupons`(
     trainer_id BIGINT NOT NULL,
     coupon_image LONGBLOB,
     expiration_period DATE NOT NULL,
-    used_date  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,  ##### 보류 #####
+    used_date  DATE, 
 	status VARCHAR(50) NOT NULL,
     CHECK (status IN ('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
@@ -209,7 +206,6 @@ CREATE TABLE IF NOT EXISTS `reviews`(
     review_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     match_id BIGINT NOT NULL ,
     content TEXT NOT NULL,
-    content_image LONGBLOB,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP ,
     review_score TINYINT UNSIGNED NOT NULL, -- 평점 
     recommend_count INT UNSIGNED NOT NULL,
@@ -226,20 +222,20 @@ CREATE TABLE IF NOT EXISTS `review_comments`(
 	FOREIGN KEY (match_id) REFERENCES matches(match_id)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-create table if not exists `upload_files` (
-	id bigint auto_increment primary key,
-    original_name varchar(255) not null,
-    file_name varchar(255) not null, 
-    file_path varchar(500) not null, 
-    file_type varchar(100), 
-    file_size bigint not null, 
+CREATE TABLE IF NOT EXISTS `upload_files` (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    original_name VARCHAR(255) NOT NULL,
+    file_name VARCHAR(255) NOT NULL, 
+    file_path VARCHAR(500) NOT NULL, 
+    file_type VARCHAR(100), 
+    file_size BIGINT NOT NULL, 
     
-    target_id bigint not null,
-    target_type enum('PROFILE', 'MEAL','ROUTINE', 'COMMUNITY', 'TRAINER_INFOS',
-    'TRAINER_LICENSE', 'TRAINER_ATTACHMENT', 'REVIEW') not null,
+    target_id BIGINT NOT NULL,
+    target_type ENUM('PROFILE', 'MEAL','ROUTINE', 'COMMUNITY', 'TRAINER_INFOS',
+    'TRAINER_LICENSE', 'TRAINER_ATTACHMENT', 'REVIEW') NOT NULL,
     -- PROFILE: user프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
     -- TRAINER_INFOS: 트레이너 긴 소개 파일들, TRAINER_LICENSE: 자격증, TRAINER_ATTACHMENT: 계약서,
     -- REVIEW: 리뷰
     
-    index idx_target (target_id, target_type)
+    INDEX idx_target (target_id, target_type)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
