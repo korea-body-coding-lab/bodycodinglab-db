@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS `upload_files` (
     target_id BIGINT NOT NULL,
     target_type ENUM('PROFILE', 'MEAL','ROUTINE', 'COMMUNITY', 'TRAINER_INFOS',
     'TRAINER_LICENSE', 'TRAINER_ATTACHMENT', 'REVIEW') NOT NULL,
-    -- PROFILE: user프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
+    -- PROFILE: user 프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
     -- TRAINER_INFOS: 트레이너 긴 소개 파일들, TRAINER_LICENSE: 자격증, TRAINER_ATTACHMENT: 계약서,
     -- REVIEW: 리뷰
     INDEX idx_target (target_id, target_type)
