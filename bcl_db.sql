@@ -30,17 +30,30 @@ VALUES
 CREATE TABLE IF NOT EXISTS `members` (
 	member_id BIGINT PRIMARY KEY,
     member_address VARCHAR(255) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
+    FOREIGN KEY (member_id) REFERENCES users(user_id),
+    CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPORVE', 'REJECT'))
+    -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPORVE: "승인(구독)", REJECT: "거절"
+);
+
+CREATE TABLE IF NOT EXISTS `subscriptions` (
+	payment_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    member_id BIGINT NOT NULL,
+    subscription_name VARCHAR(50) NOT NULL,
+    price INT NOT NULL,
+    payment_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     member_subscribe_date DATETIME DEFAULT CURRENT_TIMESTAMP, ##### 구독 후 자동 삽입 데이터 #####
-    is_approved BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (member_id) REFERENCES users(user_id)
+    FOREIGN KEY (member_id) REFERENCES members(member_id)
 );
 
 CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	trainer_id BIGINT PRIMARY KEY,
 	trainer_job_address VARCHAR(255) NOT NULL,
-    trainer_attachment BLOB NOT NULL, 
+    trainer_attachment BLOB NOT NULL,
 	trainer_short_introduce VARCHAR(150),
     trainer_long_introduce TEXT,
+    status VARCHAR(20) NOT NULL,
 	education_name VARCHAR(100),
     education_entrance YEAR,
     education_graduate YEAR,
@@ -73,11 +86,11 @@ CREATE TABLE IF NOT EXISTS `match_waiting_list` (
     trainer_id BIGINT NOT NULL,
     match_application_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     match_admission BOOLEAN NOT NULL DEFAULT FALSE,
+    UNIQUE KEY (member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-##### 수정 필요 (다대다) #####
 CREATE TABLE IF NOT EXISTS `matches`(
     match_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     member_id BIGINT NOT NULL,
@@ -135,12 +148,12 @@ CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     ticket_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL, 
     trainer_id BIGINT NOT NULL,
-    applied_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  ##### ????? #####
-    used_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  ##### ????? #####
-    processed_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- 보류
+    applied_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 발급 또는 신청 일자
+    used_at TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- 사용 완료 일자
+    processed_at DATETIME DEFAULT CURRENT_TIMESTAMP, ##### 보류 #####
     reject_reason VARCHAR(100),
-    ticket_progress VARCHAR(50) NOT NULL,  ##### 보류 #####
-    CHECK (ticket_progress IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'APPROVAL', 'USED_COMPLETE', 'REJECT')),
+    status VARCHAR(50) NOT NULL,  ##### 보류 #####
+    CHECK (status IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'APPROVAL', 'USED_COMPLETE', 'REJECT')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -152,8 +165,8 @@ CREATE TABLE IF NOT EXISTS `coupons`(
     coupon_image LONGBLOB,
     expiration_period DATE NOT NULL,
     used_date  TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,  ##### 보류 #####
-	coupon_progress VARCHAR(50) NOT NULL,
-    CHECK (coupon_progress IN ('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED')),
+	status VARCHAR(50) NOT NULL,
+    CHECK (status IN ('NOT_USED', 'APPLICATION', 'COMPLETE', 'EXPIRED')),
     FOREIGN KEY (member_id) REFERENCES users(user_id),
     FOREIGN KEY (trainer_id) REFERENCES users(user_id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
