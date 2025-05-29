@@ -104,9 +104,10 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     match_id BIGINT NOT NULL,
     category_id BIGINT NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    content TEXT NOT NULL,
+    post_title VARCHAR(100) NOT NULL,
+    post_content TEXT NOT NULL,
     writer_id BIGINT NOT NULL,
+    view_count BIGINT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (match_id) REFERENCES matches(id),
     FOREIGN KEY (writer_id) REFERENCES users(id),
@@ -136,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `notes` (
     note_writer BIGINT NOT NULL, 
     note_receiver BIGINT NOT NULL, 
     is_read BOOLEAN DEFAULT FALSE,
-    note_write_datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (note_writer) REFERENCES users(id),
     FOREIGN KEY (note_receiver) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
