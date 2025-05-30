@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS `subscriptions` (
 );
 
 CREATE TABLE IF NOT EXISTS `trainer_infos`(
-	id BIGINT PRIMARY KEY,
+	id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
 	job_address VARCHAR(255) NOT NULL,
 	short_introduce VARCHAR(150),
     long_introduce TEXT,
@@ -55,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	education_name VARCHAR(100),
     education_entrance YEAR,
     education_graduate YEAR,
-    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
     CHECK (status IN ('NOT_APPROVE', 'APPORVE', 'REJECT')) 
 );
 
