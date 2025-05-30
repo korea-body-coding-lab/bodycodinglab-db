@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
     writer_id BIGINT NOT NULL,
     view_count BIGINT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (match_id) REFERENCES matches(id),
     FOREIGN KEY (writer_id) REFERENCES users(id),
     FOREIGN KEY (category_id) REFERENCES personal_community_board_categories(id)
