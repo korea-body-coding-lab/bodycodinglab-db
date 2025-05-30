@@ -28,10 +28,11 @@ VALUES
 
 CREATE TABLE IF NOT EXISTS `members` (
 	 id BIGINT PRIMARY KEY,
+    user_id BIGINT NOT NULL,  
     member_address VARCHAR(255) NOT NULL,
     status VARCHAR(20) NOT NULL,
     is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
-    FOREIGN KEY (id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
     CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPORVE', 'REJECT'))
     -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPORVE: "승인(구독)", REJECT: "거절"
 );
