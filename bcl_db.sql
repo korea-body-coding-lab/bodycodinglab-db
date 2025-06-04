@@ -1,7 +1,16 @@
 CREATE DATABASE IF NOT EXISTS `fit_mate_db`
 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE `fit_mate_db`;   
+USE `fit_mate_db`;
+
+CREATE TABLE IF NOT EXISTS `roles` (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,	
+    name VARCHAR(50) NOT NULL UNIQUE 
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+INSERT INTO roles (name)
+VALUES
+	('MEMBER'), ('TRAINER'), ('ADMIN');
 
 CREATE TABLE IF NOT EXISTS `users` (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -16,15 +25,6 @@ CREATE TABLE IF NOT EXISTS `users` (
     FOREIGN KEY (role_id) REFERENCES roles(id),
     CHECK (gender IN ('MAN', 'WOMAN')) 
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS `roles` (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,	
-    name VARCHAR(50) NOT NULL UNIQUE 
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-INSERT INTO roles (role_name)
-VALUES
-	('MEMBER'), ('TRAINER'), ('ADMIN');
 
 CREATE TABLE IF NOT EXISTS `members` (
 	 id BIGINT PRIMARY KEY,
