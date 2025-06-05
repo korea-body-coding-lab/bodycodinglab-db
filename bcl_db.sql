@@ -8,10 +8,6 @@ CREATE TABLE IF NOT EXISTS `roles` (
     name VARCHAR(50) NOT NULL UNIQUE 
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-INSERT INTO roles (name)
-VALUES
-	('MEMBER'), ('TRAINER'), ('ADMIN');
-
 CREATE TABLE IF NOT EXISTS `users` (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     role_id BIGINT NOT NULL,
@@ -22,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     gender VARCHAR(20) NOT NULL,
     phone VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
+    profile_image_id BIGINT,
     FOREIGN KEY (role_id) REFERENCES roles(id),
     CHECK (gender IN ('MAN', 'WOMAN')) 
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -35,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `members` (
     FOREIGN KEY (user_id) REFERENCES users(id),
     CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPORVE', 'REJECT'))
     -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPORVE: "승인(구독)", REJECT: "거절"
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `subscriptions` (
 	 id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -45,12 +42,13 @@ CREATE TABLE IF NOT EXISTS `subscriptions` (
     payment_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     member_subscribe_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES members(id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
 	job_address VARCHAR(255) NOT NULL,
+    attachment_file_id BIGINT NOT NULL,
 	short_introduce VARCHAR(150),
     long_introduce TEXT,
     status VARCHAR(20) NOT NULL,
@@ -58,8 +56,8 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
     education_entrance YEAR,
     education_graduate YEAR,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    CHECK (status IN ('NOT_APPROVE', 'APPORVE', 'REJECT')) 
-);
+    CHECK (status IN ('NOT_APPROVE', 'APPORVE', 'REJECT'))
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `trainer_careers` (
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -102,6 +100,13 @@ CREATE TABLE IF NOT EXISTS `matches`(
     FOREIGN KEY (trainer_id) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE  IF NOT EXISTS `personal_community_board_categories` (
+	id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(20) NOT NULL, 
+    CHECK(category_name IN ('MEAL', 'ROUTINE', 'COMMUNITY' )) 
+    -- MEAL: "식단", ROUTINE: "운동루틴", COMMUNITY: "커뮤니티"
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `personal_community_board`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     match_id BIGINT NOT NULL,
@@ -115,13 +120,6 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
     FOREIGN KEY (match_id) REFERENCES matches(id),
     FOREIGN KEY (writer_id) REFERENCES users(id),
     FOREIGN KEY (category_id) REFERENCES personal_community_board_categories(id)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-CREATE TABLE  IF NOT EXISTS `personal_community_board_categories` (
-	id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    category_name VARCHAR(20) NOT NULL, 
-    CHECK(category_name IN ('MEAL', 'ROUTINE', 'COMMUNITY' )) 
-    -- MEAL: "식단", ROUTINE: "운동루틴", COMMUNITY: "커뮤니티"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `personal_community_board_comments` (
@@ -224,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `review_comments`(
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (review_id) REFERENCES reviews(id),
 	FOREIGN KEY (match_id) REFERENCES matches(id)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `upload_files` (
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -234,10 +232,35 @@ CREATE TABLE IF NOT EXISTS `upload_files` (
     file_type VARCHAR(100), 
     file_size BIGINT NOT NULL, 
     target_id BIGINT NOT NULL,
-    target_type ENUM('PROFILE', 'MEAL', 'ROUTINE', 'COMMUNITY', 'INFOS',
-    'LICENSE', 'ATTACHMENT', 'REVIEW') NOT NULL,
+    target_type VARCHAR(30) NOT NULL,
+    CHECK (target_type IN ('PROFILE', 'MEAL', 'ROUTINE', 'COMMUNITY', 'INFOS', 'LICENSE', 'ATTACHMENT', 'REVIEW')),
     -- PROFILE: user 프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
     -- TRAINER_INFOS: 트레이너 긴 소개 파일들, TRAINER_LICENSE: 자격증, TRAINER_ATTACHMENT: 계약서,
     -- REVIEW: 리뷰.
     INDEX idx_target (target_id, target_type)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE `users`
+ADD CONSTRAINT fk_users_profile_image
+FOREIGN KEY (profile_image_id) REFERENCES upload_files(id);
+
+ALTER TABLE `trainer_infos`
+ADD CONSTRAINT fk_trainer_infos_attachment_file
+FOREIGN KEY (attachment_file_id) REFERENCES upload_files(id);
+
+CREATE TABLE trainer_change_logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    trainer_id BIGINT NOT NULL,
+    user_id BIGINT,
+    prev_status VARCHAR(20),
+    new_status VARCHAR(20),
+    changed_by VARCHAR(100),
+    change_reason VARCHAR(255),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+INSERT INTO roles (name)
+VALUES
+	('MEMBER'), ('TRAINER'), ('ADMIN');
