@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `members` (
-	 id BIGINT PRIMARY KEY,
+	id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,  
     member_address VARCHAR(255) NOT NULL,
     status VARCHAR(20) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
 	job_address VARCHAR(255) NOT NULL,
-    attachment_file_id BIGINT NOT NULL,
+    attachment_file_id BIGINT,
 	short_introduce VARCHAR(150),
     long_introduce TEXT,
     status VARCHAR(20) NOT NULL,
