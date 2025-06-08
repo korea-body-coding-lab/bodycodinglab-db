@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS `members` (
     status VARCHAR(20) NOT NULL,
     is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
     FOREIGN KEY (user_id) REFERENCES users(id),
-    CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPORVE', 'REJECT'))
-    -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPORVE: "승인(구독)", REJECT: "거절"
+    CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPROVE', 'REJECT'))
+    -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPROVE: "승인(구독)", REJECT: "거절"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `subscriptions` (
@@ -189,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `member_forms`(
     pullup_level VARCHAR(20) NOT NULL,
     exercise_frequency VARCHAR(20) NOT NULL,
     investable_time VARCHAR(20) NOT NULL,
-    FOREIGN KEY (member_id) REFERENCES users (id),
+    FOREIGN KEY (member_id) REFERENCES members (id),
 	CHECK (bodyform IN ('SLIM', 'NORMAL', 'FAT')),
     CHECK (goal IN('DIET', 'IMPROVEMENT_OF_MUSCLE', 'PERFORMANCE')),
     CHECK (improved_part IN ('CHEST', 'ARM', 'STOMACH', 'LEG', 'NOT_APPLICABLE')),
