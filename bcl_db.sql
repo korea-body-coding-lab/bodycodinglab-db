@@ -107,6 +107,7 @@ CREATE TABLE  IF NOT EXISTS `personal_community_board_categories` (
     -- MEAL: "식단", ROUTINE: "운동루틴", COMMUNITY: "커뮤니티"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+
 CREATE TABLE IF NOT EXISTS `personal_community_board`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     match_id BIGINT NOT NULL,
@@ -234,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `upload_files` (
     target_id BIGINT NOT NULL,
     target_type VARCHAR(30) NOT NULL,
     license_id BIGINT,
-    CHECK (target_type IN ('PROFILE', 'MEAL', 'ROUTINE', 'COMMUNITY', 'INFOS', 'LICENSE', 'ATTACHMENT', 'REVIEW')),
+    CHECK (target_type IN ('PROFILE', 'BOARD', 'INFOS', 'LICENSE', 'ATTACHMENT', 'REVIEW')),
     -- PROFILE: user 프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
     -- TRAINER_INFOS: 트레이너 긴 소개 파일들, TRAINER_LICENSE: 자격증, TRAINER_ATTACHMENT: 계약서,
     -- REVIEW: 리뷰.
