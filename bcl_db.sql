@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `trainer_licenses` (
 
 CREATE TABLE IF NOT EXISTS `match_waiting_list` (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    member_id BIGINT NOT NULL,
+    member_id BIGINT NOT NULL UNIQUE,
     trainer_id BIGINT NOT NULL,
     applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_approved BOOLEAN NOT NULL DEFAULT FALSE,
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `match_waiting_list` (
 
 CREATE TABLE IF NOT EXISTS `matches`(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    member_id BIGINT NOT NULL,
+    member_id BIGINT NOT NULL UNIQUE,
     trainer_id BIGINT NOT NULL,
     matched_at DATE NOT NULL, 
     is_maintained BOOLEAN DEFAULT TRUE,
