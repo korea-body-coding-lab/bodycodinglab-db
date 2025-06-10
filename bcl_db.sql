@@ -263,7 +263,7 @@ CREATE TABLE trainer_change_logs (
     change_reason VARCHAR(255),
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id),
+    FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id) ON DELETE CASCADE,
     FOREIGN KEY (changed_by) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
