@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     email VARCHAR(100) NOT NULL UNIQUE,
     profile_image_id BIGINT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles(id),
     CHECK (gender IN ('MAN', 'WOMAN')) 
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `members` (
     member_address VARCHAR(255) NOT NULL,
     status VARCHAR(20) NOT NULL,
     is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPROVE', 'REJECT'))
     -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPROVE: "승인(구독)", REJECT: "거절"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
 	education_name VARCHAR(100),
     education_entrance YEAR,
     education_graduate YEAR,
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CHECK (status IN ('NOT_APPROVE', 'APPROVE', 'REJECT'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
