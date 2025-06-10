@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS `users` (
     phone VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     profile_image_id BIGINT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles(id),
     CHECK (gender IN ('MAN', 'WOMAN')) 
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -56,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
     education_entrance YEAR,
     education_graduate YEAR,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    CHECK (status IN ('NOT_APPROVE', 'APPORVE', 'REJECT'))
+    CHECK (status IN ('NOT_APPROVE', 'APPROVE', 'REJECT'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `trainer_careers` (
@@ -254,14 +256,15 @@ FOREIGN KEY (attachment_file_id) REFERENCES upload_files(id);
 CREATE TABLE trainer_change_logs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     trainer_id BIGINT NOT NULL,
-    user_id BIGINT,
+    username VARCHAR(20),
     prev_status VARCHAR(20),
     new_status VARCHAR(20),
-    changed_by VARCHAR(100),
+    changed_by BIGINT,
     change_reason VARCHAR(255),
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id)
+    FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id),
+    FOREIGN KEY (changed_by) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO roles (name)
