@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
     education_entrance YEAR,
     education_graduate YEAR,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CHECK (status IN ('NOT_APPROVE', 'APPROVE', 'REJECT'))
+    CHECK (status IN ('PENDING', 'APPROVE', 'REJECT'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `trainer_careers` (
@@ -241,8 +241,7 @@ CREATE TABLE IF NOT EXISTS `upload_files` (
     -- PROFILE: user 프로필, MEAL: 식단 게시판, ROUTINE: 운동루틴 게시판, COMMUNITY: 커뮤니티 게시판,
     -- TRAINER_INFOS: 트레이너 긴 소개 파일들, TRAINER_LICENSE: 자격증, TRAINER_ATTACHMENT: 계약서,
     -- REVIEW: 리뷰.
-    INDEX idx_target (target_id, target_type),
-    FOREIGN KEY (license_id) REFERENCES trainer_licenses(id) ON DELETE SET NULL
+    INDEX idx_target (target_id, target_type)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ALTER TABLE `users`
