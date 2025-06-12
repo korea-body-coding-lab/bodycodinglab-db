@@ -32,17 +32,15 @@ CREATE TABLE IF NOT EXISTS `members` (
     status VARCHAR(20) NOT NULL,
     is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'APPROVE', 'REJECT'))
-    -- NOT_PAYMENT: "미결제", PAYMENT: "결제", APPROVE: "승인(구독)", REJECT: "거절"
+    CHECK (status IN ('NOT_PAYMENT', 'PAYMENT', 'REJECT'))
+    -- NOT_PAYMENT: "미결제", PAYMENT: "결제", REJECT: "거절"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `subscriptions` (
 	 id BIGINT PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL,
-    subscription_name VARCHAR(50) NOT NULL,
     price INT NOT NULL,
     payment_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    member_subscribe_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES members(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -85,17 +83,18 @@ CREATE TABLE IF NOT EXISTS `match_waiting_list` (
     member_id BIGINT NOT NULL UNIQUE,
     trainer_id BIGINT NOT NULL,
     applied_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    is_approved BOOLEAN NOT NULL DEFAULT FALSE,
+    approved_status VARCHAR(50) NOT NULL,
     UNIQUE KEY (member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(id),
-    FOREIGN KEY (trainer_id) REFERENCES users(id)
+    FOREIGN KEY (trainer_id) REFERENCES users(id),
+    CHECK (approved_status IN ('NOT_APPROVED', 'APPROVED', 'REJECT'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `matches`(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     member_id BIGINT NOT NULL UNIQUE,
     trainer_id BIGINT NOT NULL,
-    matched_at DATE NOT NULL, 
+    matched_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     is_maintained BOOLEAN DEFAULT TRUE,
     UNIQUE KEY (member_id, trainer_id),
     FOREIGN KEY (member_id) REFERENCES users(id),
@@ -174,7 +173,8 @@ CREATE TABLE IF NOT EXISTS `coupons`(
 
 CREATE TABLE IF NOT EXISTS `member_forms`(
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    member_id BIGINT NOT NULL ,
+    member_id BIGINT NOT NULL,
+    is_submit BOOLEAN DEFAULT FALSE,
     age TINYINT NOT NULL,
     bodyform VARCHAR(10) NOT NULL,
     goal VARCHAR(20) NOT NULL,
