@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `trainer_licenses` (
 	trainer_id BIGINT NOT NULL,
     license_type VARCHAR(20) NOT NULL,
     license_name VARCHAR(100) NOT NULL,
+    license_image_id BIGINT,
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id),
     CHECK (license_type IN('LICENSE', 'CERTIFICATE', 'AWARD_DETAIL')) 
     -- LICENSE: "자격증", CERTIFICATE: "수료증, AWARD_DETAIL: "수상내역"
@@ -252,6 +253,10 @@ FOREIGN KEY (profile_image_id) REFERENCES upload_files(id);
 ALTER TABLE `trainer_infos`
 ADD CONSTRAINT fk_trainer_infos_attachment_file
 FOREIGN KEY (attachment_file_id) REFERENCES upload_files(id);
+
+ALTER TABLE `trainer_licenses`
+ADD CONSTRAINT fk_trainer_licenses_image
+FOREIGN KEY (license_image_id) REFERENCES upload_files(id);
 
 CREATE TABLE trainer_change_logs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
