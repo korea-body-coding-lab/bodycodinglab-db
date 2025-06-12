@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS `personal_community_board`(
     post_content TEXT NOT NULL,
     writer_id BIGINT NOT NULL,
     view_count BIGINT NOT NULL,
+    post_like BIGINT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (match_id) REFERENCES matches(id),
