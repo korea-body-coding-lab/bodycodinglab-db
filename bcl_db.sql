@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `members` (
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,  
     member_address VARCHAR(255) NOT NULL,
-    oneday_ticket_count TINYINT DEFAULT 3,
+    one_day_ticket_count TINYINT DEFAULT 3,
     status VARCHAR(20) NOT NULL,
     is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `notes` (
     FOREIGN KEY (note_receiver) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `oneday_tickets`(
+CREATE TABLE IF NOT EXISTS `one_day_tickets`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     member_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
@@ -256,7 +256,7 @@ ALTER TABLE `trainer_licenses`
 ADD CONSTRAINT fk_trainer_licenses_image
 FOREIGN KEY (license_image_id) REFERENCES upload_files(id);
 
-CREATE TABLE trainer_change_logs (
+CREATE TABLE `trainer_change_logs` (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     trainer_id BIGINT NOT NULL,
     username VARCHAR(20),
@@ -273,4 +273,3 @@ CREATE TABLE trainer_change_logs (
 INSERT INTO roles (name)
 VALUES
 	('MEMBER'), ('TRAINER'), ('ADMIN');
-    
