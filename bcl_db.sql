@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `members` (
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,  
     member_address VARCHAR(255) NOT NULL,
+    oneday_ticket_count TINYINT DEFAULT 3,
     status VARCHAR(20) NOT NULL,
     is_approved BOOLEAN DEFAULT FALSE, -- 구독 여부
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -109,7 +110,6 @@ CREATE TABLE  IF NOT EXISTS `personal_community_board_categories` (
     -- MEAL: "식단", ROUTINE: "운동루틴", COMMUNITY: "커뮤니티"
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-
 CREATE TABLE IF NOT EXISTS `personal_community_board`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     match_id BIGINT NOT NULL,
@@ -149,16 +149,15 @@ CREATE TABLE IF NOT EXISTS `notes` (
 
 CREATE TABLE IF NOT EXISTS `oneday_tickets`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    member_id BIGINT NOT NULL, 
+    member_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
-    applied_at DATE NOT NULL,  
-    used_at DATE NOT NULL,  
-    processed_at DATE NOT NULL, 
-    reject_reason VARCHAR(100),
+    issued_at DATE NOT NULL,
+    used_at DATE,
+    canceled_at DATE,
     status VARCHAR(50) NOT NULL,  
     FOREIGN KEY (member_id) REFERENCES users(id),
     FOREIGN KEY (trainer_id) REFERENCES users(id),
-    CHECK (status IN ('NOT_USED', 'APPLICATION', 'ISSUANCE', 'APPROVAL', 'USED_COMPLETE', 'REJECT'))
+    CHECK (status IN ('ISSUANCE', 'USED', 'CANCEL'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `coupons`(
@@ -275,3 +274,4 @@ CREATE TABLE trainer_change_logs (
 INSERT INTO roles (name)
 VALUES
 	('MEMBER'), ('TRAINER'), ('ADMIN');
+    
