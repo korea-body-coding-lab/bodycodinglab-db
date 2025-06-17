@@ -199,12 +199,12 @@ CREATE TABLE IF NOT EXISTS `member_forms`(
     CHECK (improved_part IN ('CHEST', 'ARM', 'STOMACH', 'LEG', 'NOT_APPLICABLE')),
     CHECK (preferred_diet IN ('VEGETARIAN', 'VEGAN', 'KITO', 'MEDITERRANEAN', 'CANIBORE', 'NOT_APPLICABLE')),
     CHECK (sugar_intake IN ('DONT_OFTEN', 'WEEK_3TO5', 'EVERYDAY')),
-    CHECK (water_intake IN ('COFFE_TEA', 'LESS_2', 'BETWEEN_2TO6', 'BETWEEN_7TO10', 'MORE_10')),
+    CHECK (water_intake IN ('COFFEE_TEA', 'LESS_2', 'BETWEEN_2TO6', 'BETWEEN_7TO10', 'MORE_10')),
 	CHECK (exercising_problem IN ('MOTIVATION', 'EFFECT', 'HARD', 'PLAN', 'COACHING', 'NOT_APPLICABLE')),
     CHECK (pushup_level IN ('LESS_5', 'BETWEEN_5TO10', 'MORE_10')), 
     CHECK (pullup_level IN ('LESS_5', 'BETWEEN_5TO10', 'MORE_10')),
 	CHECK (exercise_frequency IN ('NEVER', 'WEEK_1TO2', 'WEEK_3', 'MORE_WEEK_3')),
-	CHECK (investable_time IN ('MIN30', 'MIN30', 'HOUR1', 'FREEDOM'))
+	CHECK (investable_time IN ('MIN30', 'MIN40', 'HOUR1', 'FREEDOM'))
  ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `reviews`(
