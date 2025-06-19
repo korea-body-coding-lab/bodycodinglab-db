@@ -247,11 +247,11 @@ CREATE TABLE IF NOT EXISTS `upload_files` (
 
 ALTER TABLE `users`
 ADD CONSTRAINT fk_users_profile_image
-FOREIGN KEY (profile_image_id) REFERENCES upload_files(id);
+FOREIGN KEY (profile_image_id) REFERENCES upload_files(id) ON DELETE CASCADE;
 
 ALTER TABLE `trainer_infos`
 ADD CONSTRAINT fk_trainer_infos_attachment_file
-FOREIGN KEY (attachment_file_id) REFERENCES upload_files(id);
+FOREIGN KEY (attachment_file_id) REFERENCES upload_files(id) ON DELETE CASCADE;
 
 ALTER TABLE `trainer_licenses`
 ADD CONSTRAINT fk_trainer_licenses_image
