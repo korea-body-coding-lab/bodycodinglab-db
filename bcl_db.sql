@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
     long_introduce TEXT,
     status VARCHAR(20) NOT NULL,
 	education_name VARCHAR(100),
-    education_entrance YEAR,
-    education_graduate YEAR,
+    education_entrance VARCHAR(10),
+    education_graduate VARCHAR(10),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CHECK (status IN ('PENDING', 'APPROVE', 'REJECT'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS `trainer_careers` (
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
     trainer_id BIGINT NOT NULL,
     company_name VARCHAR(50) NOT NULL,
-    company_join YEAR NOT NULL,
-    company_quit YEAR NOT NULL,
+    company_join DATE NOT NULL,
+    company_quit DATE NOT NULL,
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -270,6 +270,8 @@ CREATE TABLE `trainer_change_logs` (
     FOREIGN KEY (trainer_id) REFERENCES trainer_infos(id) ON DELETE CASCADE,
     FOREIGN KEY (changed_by) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+select * from users;
 
 INSERT INTO roles (name)
 VALUES
