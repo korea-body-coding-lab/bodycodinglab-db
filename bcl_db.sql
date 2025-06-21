@@ -271,7 +271,21 @@ CREATE TABLE `trainer_change_logs` (
     FOREIGN KEY (changed_by) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-select * from users;
+CREATE OR REPLACE VIEW `trainer_list_view` AS
+SELECT
+	t.id AS trainer_id,
+	u.username,
+	u.name,
+	u.birthdate,
+	t.job_address,
+	u.created_at,
+	t.status
+FROM
+	trainer_infos t
+JOIN
+	users u ON t.user_id = u.id
+WHERE
+	u.role_id = (SELECT id FROM roles WHERE name = 'TRAINER');
 
 INSERT INTO roles (name)
 VALUES
