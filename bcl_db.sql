@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `one_day_tickets`(
     issued_at DATE NOT NULL,
     used_at DATE,
     canceled_at DATE,
+    cancel_reason VARCHAR(255),
     status VARCHAR(50) NOT NULL,  
     FOREIGN KEY (member_id) REFERENCES users(id),
     FOREIGN KEY (trainer_id) REFERENCES users(id),
