@@ -286,6 +286,24 @@ JOIN
 	users u ON t.user_id = u.id
 WHERE
 	u.role_id = (SELECT id FROM roles WHERE name = 'TRAINER');
+    
+    CREATE TABLE payments (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    
+    order_id VARCHAR(255) NOT NULL UNIQUE,     
+  
+	amount INT NOT NULL,
+    payment_status VARCHAR(50) NOT NULL,             
+    payment_method VARCHAR(50) NOT NULL, 
+    
+    member_id BIGINT NOT NULL,              
+    subscription_id BIGINT UNIQUE,          
+
+    CONSTRAINT fk_payments_member FOREIGN KEY (member_id) REFERENCES members(id),
+    CONSTRAINT fk_payments_subscription FOREIGN KEY (subscription_id) REFERENCES subscriptions(id),
+    CHECK (payment_status IN("READY", "SUCCESS", "FAIL" )),
+    CHECK (payment_method IN("KAKAO_PAY"))
+
 
 INSERT INTO roles (name)
 VALUES
