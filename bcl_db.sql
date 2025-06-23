@@ -304,6 +304,7 @@ WHERE
     CONSTRAINT fk_payments_subscription FOREIGN KEY (subscription_id) REFERENCES subscriptions(id),
     CHECK (payment_status IN("READY", "SUCCESS", "FAIL" )),
     CHECK (payment_method IN("KAKAO_PAY"))
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 INSERT INTO roles (name)
