@@ -292,6 +292,7 @@ WHERE
     CREATE TABLE payments (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     
+    payment_key VARCHAR(255) UNIQUE,
     order_id VARCHAR(255) NOT NULL UNIQUE,     
   
 	amount INT NOT NULL,
