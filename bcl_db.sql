@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `trainer_infos`(
     attachment_file_id BIGINT,
 	short_introduce VARCHAR(150),
     long_introduce TEXT,
+    info_image_id BIGINT,
     status VARCHAR(20) NOT NULL,
 	education_name VARCHAR(100),
     education_entrance VARCHAR(10),
@@ -255,9 +256,13 @@ ALTER TABLE `trainer_infos`
 ADD CONSTRAINT fk_trainer_infos_attachment_file
 FOREIGN KEY (attachment_file_id) REFERENCES upload_files(id) ON DELETE CASCADE;
 
+ALTER TABLE `trainer_infos`
+ADD CONSTRAINT fk_trainer_info_images
+FOREIGN KEY (info_image_id) REFERENCES upload_files(id) ON DELETE CASCADE;
+
 ALTER TABLE `trainer_licenses`
 ADD CONSTRAINT fk_trainer_licenses_image
-FOREIGN KEY (license_image_id) REFERENCES upload_files(id);
+FOREIGN KEY (license_image_id) REFERENCES upload_files(id) ON DELETE CASCADE;
 
 CREATE TABLE `trainer_change_logs` (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
