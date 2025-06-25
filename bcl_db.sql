@@ -90,6 +90,8 @@ CREATE TABLE IF NOT EXISTS `match_waiting_list` (
     FOREIGN KEY (trainer_id) REFERENCES users(id),
     CHECK (approved_status IN ('NOT_APPROVED', 'APPROVED', 'REJECT'))
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE match_waiting_list
+ADD COLUMN reject_response TEXT;
 
 CREATE TABLE IF NOT EXISTS `matches`(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -153,6 +155,7 @@ CREATE TABLE IF NOT EXISTS `one_day_tickets`(
     issued_at DATE NOT NULL,
     used_at DATE,
     canceled_at DATE,
+    cancel_reason VARCHAR(255),
     status VARCHAR(50) NOT NULL,  
     FOREIGN KEY (member_id) REFERENCES users(id),
     FOREIGN KEY (trainer_id) REFERENCES users(id),
@@ -285,6 +288,26 @@ JOIN
 	users u ON t.user_id = u.id
 WHERE
 	u.role_id = (SELECT id FROM roles WHERE name = 'TRAINER');
+    
+    CREATE TABLE payments (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    
+    payment_key VARCHAR(255) UNIQUE,
+    order_id VARCHAR(255) NOT NULL UNIQUE,     
+  
+	amount INT NOT NULL,
+    payment_status VARCHAR(50) NOT NULL,             
+    payment_method VARCHAR(50) NOT NULL, 
+    
+    member_id BIGINT NOT NULL,              
+    subscription_id BIGINT UNIQUE,          
+
+    CONSTRAINT fk_payments_member FOREIGN KEY (member_id) REFERENCES members(id),
+    CONSTRAINT fk_payments_subscription FOREIGN KEY (subscription_id) REFERENCES subscriptions(id),
+    CHECK (payment_status IN("READY", "SUCCESS", "FAIL" )),
+    CHECK (payment_method IN("KAKAO_PAY"))
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 INSERT INTO roles (name)
 VALUES
