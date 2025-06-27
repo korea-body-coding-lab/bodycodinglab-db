@@ -317,3 +317,8 @@ WHERE
 INSERT INTO roles (name)
 VALUES
 	('MEMBER'), ('TRAINER'), ('ADMIN');
+    INSERT INTO personal_community_board_categories (category_name)
+VALUES 
+    ('MEAL'),
+    ('ROUTINE'),
+    ('COMMUNITY');
